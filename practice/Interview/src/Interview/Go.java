@@ -36,40 +36,7 @@ public class Go {
 		System.out.println(d);
 		System.out.println("value = "  + (true == false ? 10.9 : 9));
 		System.out.println("value = "  + (32 >> 33));
-		try {
-			System.out.println(fin());
-		}
-		catch(Exception e){
-			e.printStackTrace();
-		}
-		Scanner scan = new Scanner(System.in);
-		System.out.println("请输入第一个数字：");
-		int i1 = scan.nextInt();
-		System.out.println("请输入第二个数字：");
-		int i2 = scan.nextInt();
-		System.out.println("两数之和：" + (i1 + i2));
-//		scan.close();
-		
-		int i3 = 0;
-		int i4 = 0;
-		BufferedReader buffer = new BufferedReader(new InputStreamReader(System.in));
-		try {
-			System.out.println("请输入第一个数字：");
-			i3 = Integer.parseInt(buffer.readLine());
-			System.out.println("请输入第二个数字：");
-			i4 = Integer.parseInt(buffer.readLine());	
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}finally {
-			System.out.println("两数之和：" + (i3 + i4));
-			try {
-				buffer.close();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}	
+		System.out.println(fib(4));
 	}
 	
 	private static String fin() throws Exception {
@@ -79,5 +46,9 @@ public class Go {
 		}finally {
 			System.out.println("I am finally");
 		}
+	}
+	
+	private static int fib(int i) {
+		return i<3 ? 1 : fib(i-1) + fib(i-2);
 	}
 }
