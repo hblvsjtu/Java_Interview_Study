@@ -3,6 +3,11 @@
  */
 package Interview;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.Scanner;
+
 /**
  * @author LvHongbin
  *
@@ -37,7 +42,34 @@ public class Go {
 		catch(Exception e){
 			e.printStackTrace();
 		}
+		Scanner scan = new Scanner(System.in);
+		System.out.println("请输入第一个数字：");
+		int i1 = scan.nextInt();
+		System.out.println("请输入第二个数字：");
+		int i2 = scan.nextInt();
+		System.out.println("两数之和：" + (i1 + i2));
+//		scan.close();
 		
+		int i3 = 0;
+		int i4 = 0;
+		BufferedReader buffer = new BufferedReader(new InputStreamReader(System.in));
+		try {
+			System.out.println("请输入第一个数字：");
+			i3 = Integer.parseInt(buffer.readLine());
+			System.out.println("请输入第二个数字：");
+			i4 = Integer.parseInt(buffer.readLine());	
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally {
+			System.out.println("两数之和：" + (i3 + i4));
+			try {
+				buffer.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}	
 	}
 	
 	private static String fin() throws Exception {

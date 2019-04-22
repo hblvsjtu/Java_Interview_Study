@@ -39,7 +39,7 @@
 > - 父类委托 超类被加载后，子类的Classloader没必要再加载一次，如果没有超类（即自己就是超类）时，就使用bootstrap classloader进行加载。原因有二：
 >> - 这样做可以避免重复加载
 >> - 考虑到安全的因素。 如果不采用这种方式，用户就可以自己加载String类来动态代替Java的核心API定义的类型，这样会存在很大的安全隐患。这由于采用了父类委托，String已经在启动的时候被加载，所以用户自定义类无法加载一个自定义的ClassLoader
->>>>>> ![图1-1 Java类加载器.png](https://github.com/hblvsjtu/JavaMultiThreadProgramming_Study/blob/master/picture/%E5%9B%BE1-1%20%E7%BA%BF%E7%A8%8B%E5%85%AD%E7%A7%8D%E7%8A%B6%E6%80%81.jpg?raw=true)
+>>>>>> ![图1-1 Java类加载器.png](https://github.com/hblvsjtu/Java_Interview_Study/blob/master/picture/%E5%9B%BE1-1%20Java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8.png?raw=true)
                 
 > - 一些重要的方法
 >> - loadClass 
@@ -68,8 +68,8 @@
 
 面向类型 | 特点 |  使用范围  
 -|-|-
-字节 | 保证系统中文件的二进制内容和读入JVM内部的二进制内容一致，不进行编码转换 | 视频或者音频文件 |
-字符 | 保证系统中文件的字符和读入内存的字符一致，隐式地使用系统默认的编码方式做编码转换（而且这种编码方式无法自己选择） | Reader类和Write类 |
+字节 | 保证系统中文件的二进制内容和读入JVM内部的二进制内容一致，不进行编码转换 | 视频或者音频文件 InputStream和OutputStream类为后缀的类|
+字符 | 保证系统中文件的字符和读入内存的字符一致，隐式地使用系统默认的编码方式做编码转换（而且这种编码方式无法自己选择） | 以Reader和Write为后缀的类 |
 字节-字符 | Java中能指定转换编码的地方也就在字符和字节转换的地方 | InputStreamReader类和OutputStreamWriter类 |
                 
         
@@ -212,5 +212,69 @@
 <h2 id='2'>二、传递与引用</h2>
 <h3 id='2.1'>2.1 传值与传引用</h3>  
         
-#### 1) ClassLoader
-> -                                                                         
+#### 1) 规律
+> - 不管Java参数类型是什么，一律传递的是参数的副本
+> - 如果参数是值，那么传得就是值的副本
+> - 如果参数是引用，那么传得就是引用的副本，也就是“被复制的钥匙”，这就意味着不能修改“原来的钥匙”
+> - 这里跟C++不同，C++在传递引用的时候是真的传递引用，而Java是传递引用的副本。其实两者在方法里都可以改掉被引用的内容。
+        
+<h3 id='2.2'>2.2 静态变量和私有变量</h3>  
+        
+#### 1) 初始化
+> - 定义在类中的变量会被赋予一个默认的值
+#### 2) 静态方法
+> - 静态方法访问外部变量或者方法时只能访问静态变量或者静态方法，否则会出错
+        
+<h3 id='2.3'>2.3 输入/输出流</h3>  
+        
+#### 1) 读入有很多数据的大文件
+> - new StringBuffer(new InputStreamReader(new FileInputStream("file.name")));
+#### 2) 从键盘输入数字的两种方法
+> - 使用Scanner类
+                
+                Scanner scan = new Scanner(System.in);
+                System.out.println("请输入第一个数字：");
+                int i1 = scan.nextInt();
+                System.out.println("请输入第二个数字：");
+                int i2 = scan.nextInt();
+                System.out.println("两数之和：" + (i1 + i2));
+                scan.close();
+
+                // 控制台
+                请输入第一个数字：
+                1
+                请输入第二个数字：
+                2
+                两数之和：3
+
+> - 使用BufferedReader类和InputStreamReader类
+                
+                int i3 = 0;
+                int i4 = 0;
+                BufferedReader buffer = new BufferedReader(new InputStreamReader(System.in));
+                try {
+                    System.out.println("请输入第一个数字：");
+                    i3 = Integer.parseInt(buffer.readLine());
+                    System.out.println("请输入第二个数字：");
+                    i4 = Integer.parseInt(buffer.readLine());   
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }finally {
+                    System.out.println("两数之和：" + (i3 + i4));
+                    try {
+                        buffer.close();
+                    } catch (IOException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                }   
+
+                // 控制台
+                请输入第一个数字：
+                1
+                请输入第二个数字：
+                2
+                两数之和：3
+> - StringBuffer是一个处理字符串的类，而BufferReader是一个I/O流
+> - 
