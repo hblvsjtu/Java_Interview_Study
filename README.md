@@ -19,8 +19,14 @@
 ### [2.4 典型的递归问题](#2.4)
 ## [三、Java内存管理](#3)
 ### [3.1 典型的递归问题](#3.1)
-### [2.2 静态变量和私有变量](#3.2)
-### [2.3 输入/输出流和序列化](#3.3)
+### [3.2 clone](#3.2)
+### [3.3 输入/输出流和序列化](#3.3)
+## [四、面向对象](#3)
+### [4.1 类和对象](#4.1)
+### [4.2 集合类](#4.2)
+### [4.3 构造函数](#4.3)
+### [4.4 多态](#4.4)
+### [4.5 继承](#4.5)
 
         
 ------      
@@ -302,7 +308,197 @@
 ------      
         
 <h2 id='3'>三、Java内存管理</h2>
-<h3 id='3.1'>3.1 典型的递归问题</h3>  
+<h3 id='3.1'>3.1 垃圾收集</h3>  
         
-#### 1) 斐波那契数列
-> - 
+#### 1) Java垃圾收集机制
+> - 优势：Java不像C和C++，不要求程序员显式地分配内存，释放内存。避免很多潜在的问题，Java在创建对象时会自动分配内存，并当该对象的引用不存在时释放这块内存
+> - 工作机制：Java使用对象表来将软指针映射为对象的引用。之所以称为“软指针”，因为这些指针并不是直接指向对象，而是指向对象的引用。使用软指针，Java的垃圾收集器可以以单独的线程在后台存在，并依次检查每一个对象，通过更改对象表项来标记对象、移除对象、移动对象或者检查对象。
+> - 调用System类中的静态gc()方法可以运行垃圾收集器，但不能保证立即回收指定对象，只是向JVM发出回收垃圾的申请而已。具体的原理请参考[深入理解Java虚拟机]()
+> - 调用protected void finalize() throws Throwable或者进行重写。在finalize()方法返回之后，对象消失，垃圾收集开始执行。属于一种强制执行垃圾回收的方法。
+> - 判断一块内存空间是否符合垃圾收集器收集的标准，只有两条原则
+>> - 给对象赋予了null，而且再也没有被调用
+>> - 给对象赋予了新值，即重新分配了内存，那么旧的内存可以被回收
+> - 养成良好的编程习惯，让引用变量退出活动域后，自动设置为null，暗示垃圾手机器来收集该对象。注意，局部变量不再使用的时候，没有必要显式设置为null，对于这些变量的引用将随着方法的退出而自动清除。
+#### 2) Java中的内存泄露
+> - 在Java中，内存泄露就是存在一些被分配的对象，这些对象有两个特点：
+>> - 对象是可达的，即在有向图中，存在通路可以与其相连
+>> - 对象是无用的，即程序以后不会再使用这些对象
+> - 本质上是占用着内存却不会再被使用的对象
+>>>>>> ![图3-1 Java内存分配.png](https://github.com/hblvsjtu/Java_Interview_Study/blob/master/picture/%E5%9B%BE1-2%20IO%E6%B5%81%E5%88%86%E7%B1%BB.png?raw=true)
+<h3 id='3.2'>3.2 clone</h3>  
+        
+#### 1) 特点
+> - clone()是Object的一个方法，任何类都自动继承拥有这个类
+> - 但是继承而来的clone()方法类不能直接调用，需要显式添加“implements Cloneable”作为标记
+> - “implements Cloneable”只是起一个标记的作用，不需要重写或者覆盖clone()方法，这是由Javac或者Java决定的
+#### 2) 检验类型
+> - clone()方法对对象是否属于cloneable类型是要进行检验
+> - 证据就是类必须实现Cloneable接口，但是这个接口的实现只是作为标记，不起实质上的作用
+#### 3) 深拷贝的定义
+> - x.clone() != x
+> - x.clone().getClass() == x.getClass()
+> - x.equal(x.clone()) == true;
+
+        
+------      
+        
+<h2 id='4'>四、面向对象</h2>
+<h3 id='4.1'>4.1 类和对象</h3>  
+        
+#### 1) equal
+> - 貌似只要是不同的对象就不相等
+> - 除非你重写equal方法
+                
+                Go go1 = new Go();
+                Go go2 = new Go();
+                Object go3 = new Go();
+                System.out.println(go1 == go2);
+                System.out.println(go1.equals(go2));
+                System.out.println(go1.equals(go1.clone()));
+                System.out.println(go2 == go3);
+                System.out.println(go3.equals(go2));
+                System.out.println(go2.equals(go3));
+
+                // 控制台
+                false
+                false
+                false
+                false
+                false
+                false
+#### 2) 创建对象的几种方式
+> - new关键字
+> - clone()方法
+> - 反序列化 ObjectInputStream()
+> - 运用反射的方法，调用java.lang.Class或者java.lang.reflect.constructor类
+#### 3) 嵌套类innner class
+> - 静态内部类意味着：
+>> - 创建一个static内部类的对象，不需要一个外部类对象
+>> - 不能从一个static内部类对象中访问外部类对象
+> - 匿名内部类不能继承其他类，但一个内部类可以作为一个接口，有另一个内部类实现
+                
+<h3 id='4.2'>4.2 集合类</h3>  
+        
+#### 1) 分类
+> - Collection 类似于数组
+>> - List 以特定的次序储存元素，取出时未必按照原来的顺序
+>>> - ArrayList 擅长随机访问元素，如果需要在中间插入、移动、删除元素则会花费较多的时间
+>>> - LinkedList 不擅长随机访问元素，如果需要在中间插入、移动、删除元素则会花费较少的时间
+>>> - Vector 不进行边界检查，可以确切知道它所持有的对象隶属什么类别，Vector总比ArrayList慢
+>> - Set 每个值只保存一个对象，不能还有重复的元素，顺序是随机的
+>>> - HashSet 使用散列函数
+>>> - TreeSet 使用红黑树
+>>> - LinkedHashSet 使用链表结合散列函数
+>> - Queue 先进先出
+>>> - PriorityQueue
+> - Map 类似于键名对 不允许有重复值
+>> - HashMap 适用于快速查找 允许一个null键和多个null值，线程同步时需要额外使用synchronize
+>> - HashTable 不允许一个null键和多个null值，比HashMap慢。而且他是线程同步的，不需要额外使用synchronize
+>> - HashTree 用来维护排序状态，比较玄学
+>> - TreeMap 适用于已经排好序的的序列
+#### 2) 特点
+> - List、Set、Map将所有对象都是为Object
+> - Collection、List、Set、Map都是接口，不能实例化。只有他们的子类才能创建始类
+> - Collections是一个帮助类，它提供一系列静态的方法实现对各种集合的搜索、排序、线程完全化操作，如
+                
+                List<Integer> list = new ArrayList<Integer>();
+                list.add(1);
+                list.add(9);
+                list.add(6);
+                list.add(3);
+                for(int i: list) {
+                    System.out.print(i);
+                }
+                Collections.sort(list);
+                for(int i: list) {
+                    System.out.print(i);
+                }
+
+                //控制台
+                19631369
+<h3 id='4.3'>4.3 构造函数</h3>  
+        
+#### 1) 知识点
+> - 创建类时，静态类先行，然后到实例域、构造函数
+> - 普通方法名可以跟构造函数名重名，但是区别在于构造函数没有返回值
+        
+<h3 id='4.4'>4.4 多态</h3>  
+        
+#### 1) 含义
+> - 允许子类型的指针赋值给超类类型的指针
+> - 也就是说超类可以根据当前赋值给它的子类的特性进行运作。
+> - 一个重要的目的是：接口重用
+> - 设计一个接口往往比设计一大堆类来实现这个接口难很多
+#### 2) 需要注意的点
+> - 重载指的是同一个类中相同方法名不同参数
+> - 覆盖一个方法必须签名和返回类型都相同，而且是发生在超类和子类之间
+> - 静态方法不能被覆盖，首选超类最顶层的方法
+> - 重载和覆盖的区别
+> - null可以强行转换为其他所有类型，如(String)null，但是返回值为null
+> - 使用多态的时候如果父类要用子类的方法，则需要将父类进行强制转换，否则方法不可见。结论是如果你要一个实例执行某个方法，那么这个方法一定在某个类中存在，而且这个类必须是这个实例的类型，超类必须经过强制类型转
+                
+                // Father类
+                /**
+                 * 
+                 */
+                package Interview;
+
+                /**
+                 * @author LvHongbin
+                 *
+                 */
+                public class Father {
+
+                }
+
+                // Son 类
+                /**
+                 * 
+                 */
+                package Interview;
+
+                /**
+                 * @author LvHongbin
+                 *
+                 */
+                public class Son extends Father{
+                    
+                    
+                    public String getField(String name) {
+                        return name;
+                    }
+
+                }
+
+                // 执行代码
+                Father father = new Son();
+                System.out.println(((Son)father).getField("egg"));
+
+                //控制台
+                egg
+
+            
+<h3 id='4.5'>4.5 继承</h3>  
+        
+#### 1) 含义
+> - 继承会破坏封装性，因为会将超类的实现细节暴露给子类
+> - 本质上是“白盒式代码复用”
+#### 2) super
+> - 必须放在首位，否则会出错
+> - 关于super的用法在[Java_Study 5.1 覆盖](https://github.com/hblvsjtu/Java_Study#5.1)中有详细的说明
+#### 3) 不能继承的情况
+> - 匿名内部类不能继承其他类，但一个内部类可以作为一个接口，有另一个内部类实现
+            
+<h3 id='4.6'>4.6 抽象类与接口</h3>  
+        
+#### 1) 抽象类
+> - 只能作为其他类的基类
+> - 不能直接被实例化，即不能使用new
+> - 抽象类中允许有抽象的方法和非抽象的方法
+> - 抽象类不能同时又是final的
+> - 如果一个非抽象类从抽象类中产生，那么必须通过覆盖来实现所有继承而来的抽象
+#### 2) 接口
+> - 接口是一种更加高级的抽象
+> - 默认修饰符是public 
+> - 方法默认是public abstract
+> - 实例域默认是public static final

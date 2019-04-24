@@ -3,18 +3,17 @@
  */
 package Interview;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.Scanner;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author LvHongbin
  *
  */
-public class Go {
+public class Go implements Cloneable{
 	
-	public static void main(String[] arg) {
+	public static void main(String[] arg) throws CloneNotSupportedException {
 		System.out.println(1 + "0");
 		System.out.println("1" + 0);
 		System.out.println(1 + '0');
@@ -37,6 +36,29 @@ public class Go {
 		System.out.println("value = "  + (true == false ? 10.9 : 9));
 		System.out.println("value = "  + (32 >> 33));
 		System.out.println(fib(4));
+		Go go1 = new Go();
+		Go go2 = new Go();
+		Object go3 = new Go();
+		System.out.println(go1 == go2);
+		System.out.println(go1.equals(go2));
+		System.out.println(go1.equals(go1.clone()));
+		System.out.println(go2 == go3);
+		System.out.println(go3.equals(go2));
+		System.out.println(go2.equals(go3));
+		List<Integer> list = new ArrayList<Integer>();
+		list.add(1);
+		list.add(9);
+		list.add(6);
+		list.add(3);
+		for(int i: list) {
+			System.out.print(i);
+		}
+		Collections.sort(list);
+		for(int i: list) {
+			System.out.print(i);
+		}
+		Father father = new Son();
+		System.out.println(((Son)father).getField("egg"));
 	}
 	
 	private static String fin() throws Exception {
@@ -51,4 +73,5 @@ public class Go {
 	private static int fib(int i) {
 		return i<3 ? 1 : fib(i-1) + fib(i-2);
 	}
+	
 }

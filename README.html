@@ -1063,12 +1063,20 @@ body .markdown-body
 <h2 id="_2">目录<a class="headerlink" href="#_2" title="Permanent link"></a></h2>
 <h2 id="java"><a href="#1">一、Java程序设计基本概念</a><a class="headerlink" href="#java" title="Permanent link"></a></h2>
 <h3 id="11-jvm"><a href="#1.1">1.1 JVM</a><a class="headerlink" href="#11-jvm" title="Permanent link"></a></h3>
-<h3 id="12"><a href="#1.2">1.2 线程状态与线程属性</a><a class="headerlink" href="#12" title="Permanent link"></a></h3>
-<h2 id="_3"><a href="#2">二、同步</a><a class="headerlink" href="#_3" title="Permanent link"></a></h2>
-<h3 id="21-synchronized"><a href="#2.1">2.1 synchronized</a><a class="headerlink" href="#21-synchronized" title="Permanent link"></a></h3>
-<h3 id="22"><a href="#2.2">2.2 线程安全与非线程安全</a><a class="headerlink" href="#22" title="Permanent link"></a></h3>
-<h3 id="23"><a href="#2.3">2.3 同步</a><a class="headerlink" href="#23" title="Permanent link"></a></h3>
-<h3 id="24-volatile"><a href="#2.4">2.4 volatile关键字</a><a class="headerlink" href="#24-volatile" title="Permanent link"></a></h3>
+<h3 id="12-i"><a href="#1.2">1.2 类型转换、i++和运算符</a><a class="headerlink" href="#12-i" title="Permanent link"></a></h3>
+<h3 id="13"><a href="#1.3">1.3 异常</a><a class="headerlink" href="#13" title="Permanent link"></a></h3>
+<h2 id="_3"><a href="#2">二、传递与引用和循环</a><a class="headerlink" href="#_3" title="Permanent link"></a></h2>
+<h3 id="21"><a href="#2.1">2.1 传值与引用</a><a class="headerlink" href="#21" title="Permanent link"></a></h3>
+<h3 id="22"><a href="#2.2">2.2 静态变量和私有变量</a><a class="headerlink" href="#22" title="Permanent link"></a></h3>
+<h3 id="23"><a href="#2.3">2.3 输入/输出流和序列化</a><a class="headerlink" href="#23" title="Permanent link"></a></h3>
+<h3 id="24"><a href="#2.4">2.4 典型的递归问题</a><a class="headerlink" href="#24" title="Permanent link"></a></h3>
+<h2 id="java_1"><a href="#3">三、Java内存管理</a><a class="headerlink" href="#java_1" title="Permanent link"></a></h2>
+<h3 id="31"><a href="#3.1">3.1 典型的递归问题</a><a class="headerlink" href="#31" title="Permanent link"></a></h3>
+<h3 id="22-clone"><a href="#3.2">2.2 clone</a><a class="headerlink" href="#22-clone" title="Permanent link"></a></h3>
+<h3 id="23_1"><a href="#3.3">2.3 输入/输出流和序列化</a><a class="headerlink" href="#23_1" title="Permanent link"></a></h3>
+<h2 id="_4"><a href="#3">四、面向对象</a><a class="headerlink" href="#_4" title="Permanent link"></a></h2>
+<h3 id="41"><a href="#4.1">4.1 典型的递归问题</a><a class="headerlink" href="#41" title="Permanent link"></a></h3>
+<h3 id="42-clone"><a href="#4.2">4.2 clone</a><a class="headerlink" href="#42-clone" title="Permanent link"></a></h3>
 <hr />
 <h2 id='1'>一、Java程序设计基本概念</h2>
 
@@ -1079,10 +1087,634 @@ body .markdown-body
 <ul>
 <li>ClassLoader在JVM运行的时候加载Java核心的API和用户自定义的类；<blockquote>
 <ul>
-<li></li>
+<li>bootstrap classloader 启动类加载器</li>
+<li>classloader 用户定义加载器<blockquote>
+<ul>
+<li>ExtClassLoader 用来加载Java拓展API，也就是/lib/ext</li>
+<li>AppClassLoader 用来加载用户自定义类</li>
 </ul>
 </blockquote>
 </li>
+</ul>
+</blockquote>
+</li>
+<li>加载流程：当运行一个程序的时候，JVM启动，运行bootstrap classloader，该ClassLoader加载核心API（ExtClassLoader和AppClassLoader）也在此时候被加载，然后调用ExtClassLoader加载拓展API，最后AppClassLoader加载CLASSPATH目录下定义的Class</li>
+<li>JVM加载类的三个步骤<blockquote>
+<ul>
+<li>装载 找到相应的class，读入JVM</li>
+<li>连接 分成三个阶段：验证class是否符合规格；准备，就是为类变量分配内存的同时设置默认初始值；解释，这里的解释是指根据类中的符号引用查找相应的实体，再把符号引用替换成一个直接引用的过程。</li>
+<li>初始化 class文件的初始化</li>
+</ul>
+</blockquote>
+</li>
+<li>类加载的这种关系称为双亲委派模式，需要注意的是他们之间不是继承关系，而是组合关系，在执行类加载的动作时，首先都是交给父类去加载，如果父类无法加载再交给子类去完成，直到调用用户自定义的类加载器去加载，如果全部都无法加载，就会抛出ClassNotFoundException。<a href="https://blog.csdn.net/caomiao2006/article/details/47735245">出处</a></li>
+<li>
+<p>父类委托 超类被加载后，子类的Classloader没必要再加载一次，如果没有超类（即自己就是超类）时，就使用bootstrap classloader进行加载。原因有二：</p>
+<blockquote>
+<ul>
+<li>这样做可以避免重复加载</li>
+<li>考虑到安全的因素。 如果不采用这种方式，用户就可以自己加载String类来动态代替Java的核心API定义的类型，这样会存在很大的安全隐患。这由于采用了父类委托，String已经在启动的时候被加载，所以用户自定义类无法加载一个自定义的ClassLoader<blockquote>
+<blockquote>
+<blockquote>
+<blockquote>
+<p><img alt="图1-1 Java类加载器.png" src="https://github.com/hblvsjtu/Java_Interview_Study/blob/master/picture/%E5%9B%BE1-1%20Java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8.png?raw=true" /></p>
+</blockquote>
+</blockquote>
+</blockquote>
+</blockquote>
+</li>
+</ul>
+</blockquote>
+</li>
+<li>
+<p>一些重要的方法</p>
+<blockquote>
+<ul>
+<li>loadClass </li>
+</ul>
+</blockquote>
+</li>
+</ul>
+</blockquote>
+<div class="codehilite"><pre>            class loadClass(String name, boolean resolve)
+</pre></div>
+
+
+<blockquote>
+<blockquote>
+<ul>
+<li>defineClass 将原始字节组成的数组转换成class对象，并且是final的无法被覆盖</li>
+<li>findSystemClass 从本地文件中寻找类文件，如果存在，则使用defineClass转换称class对象</li>
+</ul>
+</blockquote>
+</blockquote>
+<div class="codehilite"><pre>            public class findClass(String name) {
+                byte[] data = loadClassData(name);
+                return defineClass(name, data, 0, data.length);
+            }
+</pre></div>
+
+
+<blockquote>
+<blockquote>
+<ul>
+<li>findClass Java的自定义加载器 loadClass默认实现调用这个新方法，寻找所有Classload的特殊代码。findClass（）用于写类加载逻辑、loadClass（）方法的逻辑里如果父类加载器加载失败则会调用自己的findClass（）方法完成加载，保证了双亲委派规则。如果不想打破双亲委派模型，那么只需要重写findClass方法即可。如果想打破双亲委派模型，那么就重写整个loadClass方法。<a href="https://blog.csdn.net/cqc__c/article/details/81583877">cqc__c的CSDN</a></li>
+<li>forName(name, initialize, loader)</li>
+</ul>
+</blockquote>
+</blockquote>
+<div class="codehilite"><pre>            Class.forNmae(&quot;something&quot;, true, CALLCLASS.class.getClassLoader());
+</pre></div>
+
+
+<h4 id="2-unicode">2) Unicode<a class="headerlink" href="#2-unicode" title="Permanent link"></a></h4>
+<blockquote>
+<ul>
+<li>Java中字符只以一种形式存在，那就是Unicode</li>
+</ul>
+</blockquote>
+<div class="codehilite"><pre>            char han = &#39;永&#39;；
+            System.out.printf(&quot;%x&quot;, (short)han);
+
+            // 0x6c38
+</pre></div>
+
+
+<blockquote>
+<ul>
+<li>JVM约定字符只分为两个部分，JVM内部和OS文件系统的，在JVM内部统一使用Unicode，当字符被输入输出的时候，就会进行编码转换。也就是说，编码转换只会发生在边界的地方。而I/O也分两大阵型，一个是面向字符，另一个是面向字节</li>
+</ul>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>面向类型</th>
+<th>特点</th>
+<th>使用范围</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>字节</td>
+<td>保证系统中文件的二进制内容和读入JVM内部的二进制内容一致，不进行编码转换</td>
+<td>视频或者音频文件 InputStream和OutputStream类为后缀的类</td>
+</tr>
+<tr>
+<td>字符</td>
+<td>保证系统中文件的字符和读入内存的字符一致，隐式地使用系统默认的编码方式做编码转换（而且这种编码方式无法自己选择）</td>
+<td>以Reader和Write为后缀的类</td>
+</tr>
+<tr>
+<td>字节-字符</td>
+<td>Java中能指定转换编码的地方也就在字符和字节转换的地方</td>
+<td>InputStreamReader类和OutputStreamWriter类</td>
+</tr>
+</tbody>
+</table>
+<h3 id='1.2'>1.2 类型转换、i++和运算符</h3>
+
+<h4 id="1">1) 类型转换<a class="headerlink" href="#1" title="Permanent link"></a></h4>
+<blockquote>
+<ul>
+<li>数字和字节相加，会将数字进行隐式转换成字符</li>
+<li>数字和字节相减，会在编译的时候报错</li>
+<li>数字和字符相加，会将字符进行隐式转换成Ascii码再进行相加减</li>
+<li>系统默认的浮点类型是double,所以如果是float类型需要在数字后加上f标记进行转换</li>
+<li>short后面不需要加S，会执行自动装箱</li>
+<li>char后面也不需要加c,char向高级类型转换时会转化成Ascii码</li>
+<li>高级类型转低级类型需要强行转换，而且只能是针对数值类型而非包装类进行转换，否则会出错</li>
+</ul>
+</blockquote>
+<div class="codehilite"><pre>            package Interview;
+
+            /**
+             * @author LvHongbin
+             *
+             */
+            public class Go {
+
+                public static void main(String[] arg) {
+                    System.out.println(1 + &quot;0&quot;);
+                    System.out.println(&quot;1&quot; + 0);
+                    System.out.println(1 + &#39;0&#39;);
+                    System.out.println(&#39;1&#39; + 0);
+                }
+            }
+
+            // 控制台
+            10
+            10
+            49
+            49
+</pre></div>
+
+
+<h4 id="2">2) 包装类<a class="headerlink" href="#2" title="Permanent link"></a></h4>
+<blockquote>
+<ul>
+<li>Character、Boolean、Integer、Long、Float、Double共6个</li>
+<li>String和Data本身就是类，所以没有包装类这一说法</li>
+<li>过渡型类型转换</li>
+</ul>
+</blockquote>
+<div class="codehilite"><pre>            float f = 100.0f;
+            Float F = new Float(f);
+            double d = F.doubleValue();
+</pre></div>
+
+
+<blockquote>
+<ul>
+<li></li>
+</ul>
+</blockquote>
+<h4 id="3">3) 中间缓存机制<a class="headerlink" href="#3" title="Permanent link"></a></h4>
+<blockquote>
+<ul>
+<li>适用与自增的变量同时出现在等号左右两边</li>
+</ul>
+</blockquote>
+<div class="codehilite"><pre>            int j1 = 0 ;
+            int j2 = 0 ;
+            int j3 = 0 ;
+            for(int i =0; i&lt;100; i++) {
+                j1 = j1++;
+                j2 = ++j2;
+            }
+            j3 = j3++ + j3++ + j3++ + ++j3;
+            System.out.printf(&quot;j1 = %d, j2 = %d, j3 = %d&quot;, j1, j2, j3);
+
+            // 控制台
+            j1 = 0, j2 = 100, j3 = 7
+
+
+            j1 = j1++;
+            等效于
+            temp = j1;
+            j1 = j1 + 1;
+            j1 = temp;
+
+            j2 = ++j2;
+            等效于
+            j2= j2 + 1;
+            temp = j2;
+            j2 = temp;
+
+            j3 = 0 + 1 + 2 + 4 = 7
+</pre></div>
+
+
+<h4 id="4">4) 三目运算符<a class="headerlink" href="#4" title="Permanent link"></a></h4>
+<blockquote>
+<ul>
+<li>返回类型会进行自动匹配，而匹配的类型跟问号后的值相同</li>
+</ul>
+</blockquote>
+<div class="codehilite"><pre>            System.out.println(&quot;value = &quot;  + (true == false ? 10.9 : 9));
+
+            // 控制台
+            value = 9.0
+</pre></div>
+
+
+<h4 id="5">5) 移位操作符<a class="headerlink" href="#5" title="Permanent link"></a></h4>
+<blockquote>
+<ul>
+<li>移位的位数先要进行模32运算</li>
+</ul>
+</blockquote>
+<div class="codehilite"><pre>            System.out.println(&quot;value = &quot;  + (32 &gt;&gt; 33));
+
+            // 控制台
+            value = 16
+</pre></div>
+
+
+<h3 id='1.3'>1.3 异常</h3>
+
+<h4 id="1_1">1) 异常类型<a class="headerlink" href="#1_1" title="Permanent link"></a></h4>
+<blockquote>
+<ul>
+<li>Throwable类衍生Error类和Exception类<blockquote>
+<ul>
+<li>Error类程序无法靠自身解决，所以Java不作处理，所以是unchecked exception</li>
+<li>Exception也分为运行时错误（如被0除、空字符串、空句柄）和非运行时错误（如IOException），对于运行时错误，由于编译器无法在静态检查中检查出，所以是unchecked exception</li>
+</ul>
+</blockquote>
+</li>
+<li>Java编译器要求捕获或者声明所有非运行时错误</li>
+<li>针对</li>
+</ul>
+</blockquote>
+<h4 id="2_1">2) 异常关键字<a class="headerlink" href="#2_1" title="Permanent link"></a></h4>
+<blockquote>
+<ul>
+<li>try、catch、finally分别有自己独立的代码块，相互之间不能访问，如果需要访问则可以把变量放在关键字代码块之前</li>
+<li>throw 用在方法体内部</li>
+<li>throws 用在方法体外部，用于声明可能会抛出的异常，里面可以不写catch</li>
+</ul>
+</blockquote>
+<h4 id="3-finally">3) finally<a class="headerlink" href="#3-finally" title="Permanent link"></a></h4>
+<blockquote>
+<ul>
+<li>即便try()代码块内部有return语句，如果存在finally关键字，那么finally里面的方法块会在return前执行</li>
+</ul>
+</blockquote>
+<div class="codehilite"><pre>            /**
+             * 
+             */
+            package Interview;
+
+            /**
+             * @author LvHongbin
+             *
+             */
+            public class Go {
+
+                public static void main(String[] arg) {
+                    System.out.println(fin());
+                }
+
+                private static int fin() {
+                    try {
+                        System.out.println(&quot;I am try&quot;);
+                        return &quot;I am return&quot;;
+                    }finally {
+                        System.out.println(&quot;I am finally&quot;);
+                    }
+                }
+            }
+
+            // 控制台
+            I am try
+            I am finally
+            I am return
+</pre></div>
+
+
+<hr />
+<h2 id='2'>二、传递与引用</h2>
+
+<h3 id='2.1'>2.1 传值与传引用</h3>
+
+<h4 id="1_2">1) 规律<a class="headerlink" href="#1_2" title="Permanent link"></a></h4>
+<blockquote>
+<ul>
+<li>不管Java参数类型是什么，一律传递的是参数的副本</li>
+<li>如果参数是值，那么传得就是值的副本</li>
+<li>如果参数是引用，那么传得就是引用的副本，也就是“被复制的钥匙”，这就意味着不能修改“原来的钥匙”</li>
+<li>这里跟C++不同，C++在传递引用的时候是真的传递引用，而Java是传递引用的副本。其实两者在方法里都可以改掉被引用的内容。</li>
+</ul>
+</blockquote>
+<h3 id='2.2'>2.2 静态变量和私有变量</h3>
+
+<h4 id="1_3">1) 初始化<a class="headerlink" href="#1_3" title="Permanent link"></a></h4>
+<blockquote>
+<ul>
+<li>定义在类中的变量会被赋予一个默认的值</li>
+</ul>
+</blockquote>
+<h4 id="2_2">2) 静态方法<a class="headerlink" href="#2_2" title="Permanent link"></a></h4>
+<blockquote>
+<ul>
+<li>静态方法访问外部变量或者方法时只能访问静态变量或者静态方法，否则会出错</li>
+</ul>
+</blockquote>
+<h3 id='2.3'>2.3 输入/输出流和序列化</h3>
+
+<h4 id="1_4">1) 读入有很多数据的大文件<a class="headerlink" href="#1_4" title="Permanent link"></a></h4>
+<blockquote>
+<ul>
+<li>new StringBuffer(new InputStreamReader(new FileInputStream(&ldquo;file.name&rdquo;)));</li>
+</ul>
+</blockquote>
+<h4 id="2_3">2) 从键盘输入数字的两种方法<a class="headerlink" href="#2_3" title="Permanent link"></a></h4>
+<blockquote>
+<ul>
+<li>使用Scanner类</li>
+</ul>
+</blockquote>
+<div class="codehilite"><pre>            Scanner scan = new Scanner(System.in);
+            System.out.println(&quot;请输入第一个数字：&quot;);
+            int i1 = scan.nextInt();
+            System.out.println(&quot;请输入第二个数字：&quot;);
+            int i2 = scan.nextInt();
+            System.out.println(&quot;两数之和：&quot; + (i1 + i2));
+            scan.close();
+
+            // 控制台
+            请输入第一个数字：
+            1
+            请输入第二个数字：
+            2
+            两数之和：3
+</pre></div>
+
+
+<blockquote>
+<ul>
+<li>使用BufferedReader类和InputStreamReader类</li>
+</ul>
+</blockquote>
+<div class="codehilite"><pre>            int i3 = 0;
+            int i4 = 0;
+            BufferedReader buffer = new BufferedReader(new InputStreamReader(System.in));
+            try {
+                System.out.println(&quot;请输入第一个数字：&quot;);
+                i3 = Integer.parseInt(buffer.readLine());
+                System.out.println(&quot;请输入第二个数字：&quot;);
+                i4 = Integer.parseInt(buffer.readLine());   
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }finally {
+                System.out.println(&quot;两数之和：&quot; + (i3 + i4));
+                try {
+                    buffer.close();
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
+
+            // 控制台
+            请输入第一个数字：
+            1
+            请输入第二个数字：
+            2
+            两数之和：3
+</pre></div>
+
+
+<blockquote>
+<ul>
+<li>StringBuffer是一个处理字符串的类，而BufferReader是一个I/O流</li>
+<li>字符流和字节流分类<blockquote>
+<blockquote>
+<blockquote>
+<blockquote>
+<blockquote>
+<p><img alt="图1-2 IO流分类.png" src="https://github.com/hblvsjtu/Java_Interview_Study/blob/master/picture/%E5%9B%BE1-2%20IO%E6%B5%81%E5%88%86%E7%B1%BB.png?raw=true" /></p>
+</blockquote>
+</blockquote>
+</blockquote>
+</blockquote>
+</blockquote>
+</li>
+</ul>
+</blockquote>
+<h4 id="3_1">3) 序列化<a class="headerlink" href="#3_1" title="Permanent link"></a></h4>
+<blockquote>
+<ul>
+<li>Java的“对象序列化”能将一个实现了Serializable接口的对象转换成一组byte，这样日后要用的时候就可以把这些byte数据恢复成对象</li>
+<li>使用ObjectInputStream和ObjectOutputStream类</li>
+<li>调用readObject()方法和writeObject()方法</li>
+<li>主要是用于远程传递对象</li>
+</ul>
+</blockquote>
+<h3 id='2.4'>2.4 典型的递归问题</h3>
+
+<h4 id="1_5">1) 斐波那契数列<a class="headerlink" href="#1_5" title="Permanent link"></a></h4>
+<div class="codehilite"><pre>            private static int fib(int i) {
+                return i&lt;3 ? 1 : fib(i-1) + fib(i-2);
+            }
+</pre></div>
+
+
+<hr />
+<h2 id='3'>三、Java内存管理</h2>
+
+<h3 id='3.1'>3.1 垃圾收集</h3>
+
+<h4 id="1-java">1) Java垃圾收集机制<a class="headerlink" href="#1-java" title="Permanent link"></a></h4>
+<blockquote>
+<ul>
+<li>优势：Java不像C和C++，不要求程序员显式地分配内存，释放内存。避免很多潜在的问题，Java在创建对象时会自动分配内存，并当该对象的引用不存在时释放这块内存</li>
+<li>工作机制：Java使用对象表来将软指针映射为对象的引用。之所以称为“软指针”，因为这些指针并不是直接指向对象，而是指向对象的引用。使用软指针，Java的垃圾收集器可以以单独的线程在后台存在，并依次检查每一个对象，通过更改对象表项来标记对象、移除对象、移动对象或者检查对象。</li>
+<li>调用System类中的静态gc()方法可以运行垃圾收集器，但不能保证立即回收指定对象，只是向JVM发出回收垃圾的申请而已。具体的原理请参考<a href="">深入理解Java虚拟机</a></li>
+<li>调用protected void finalize() throws Throwable或者进行重写。在finalize()方法返回之后，对象消失，垃圾收集开始执行。属于一种强制执行垃圾回收的方法。</li>
+<li>判断一块内存空间是否符合垃圾收集器收集的标准，只有两条原则<blockquote>
+<ul>
+<li>给对象赋予了null，而且再也没有被调用</li>
+<li>给对象赋予了新值，即重新分配了内存，那么旧的内存可以被回收</li>
+</ul>
+</blockquote>
+</li>
+<li>养成良好的编程习惯，让引用变量退出活动域后，自动设置为null，暗示垃圾手机器来收集该对象。注意，局部变量不再使用的时候，没有必要显式设置为null，对于这些变量的引用将随着方法的退出而自动清除。</li>
+</ul>
+</blockquote>
+<h4 id="2-java">2) Java中的内存泄露<a class="headerlink" href="#2-java" title="Permanent link"></a></h4>
+<blockquote>
+<ul>
+<li>在Java中，内存泄露就是存在一些被分配的对象，这些对象有两个特点：<blockquote>
+<ul>
+<li>对象是可达的，即在有向图中，存在通路可以与其相连</li>
+<li>对象是无用的，即程序以后不会再使用这些对象</li>
+</ul>
+</blockquote>
+</li>
+<li>本质上是占用着内存却不会再被使用的对象<blockquote>
+<blockquote>
+<blockquote>
+<blockquote>
+<blockquote>
+<p><img alt="图3-1 Java内存分配.png" src="https://github.com/hblvsjtu/Java_Interview_Study/blob/master/picture/%E5%9B%BE1-2%20IO%E6%B5%81%E5%88%86%E7%B1%BB.png?raw=true" />
+<h3 id='3.2'>3.2 clone</h3>  </p>
+</blockquote>
+</blockquote>
+</blockquote>
+</blockquote>
+</blockquote>
+</li>
+</ul>
+</blockquote>
+<h4 id="1_6">1) 特点<a class="headerlink" href="#1_6" title="Permanent link"></a></h4>
+<blockquote>
+<ul>
+<li>clone()是Object的一个方法，任何类都自动继承拥有这个类</li>
+<li>但是继承而来的clone()方法类不能直接调用，需要显式添加“implements Cloneable”作为标记</li>
+<li>“implements Cloneable”只是起一个标记的作用，不需要重写或者覆盖clone()方法，这是由Javac或者Java决定的</li>
+</ul>
+</blockquote>
+<h4 id="2_4">2) 检验类型<a class="headerlink" href="#2_4" title="Permanent link"></a></h4>
+<blockquote>
+<ul>
+<li>clone()方法对对象是否属于cloneable类型是要进行检验</li>
+<li>证据就是类必须实现Cloneable接口，但是这个接口的实现只是作为标记，不起实质上的作用</li>
+</ul>
+</blockquote>
+<h4 id="3_2">3) 深拷贝的定义<a class="headerlink" href="#3_2" title="Permanent link"></a></h4>
+<blockquote>
+<ul>
+<li>x.clone() != x</li>
+<li>x.clone().getClass() == x.getClass()</li>
+<li>x.equal(x.clone()) == true;</li>
+</ul>
+</blockquote>
+<hr />
+<h2 id='4'>四、面向对象</h2>
+
+<h3 id='4.1'>4.1 类和对象</h3>
+
+<h4 id="1-equal">1) equal<a class="headerlink" href="#1-equal" title="Permanent link"></a></h4>
+<blockquote>
+<ul>
+<li>貌似只要是不同的对象就不相等</li>
+<li>除非你重写equal方法</li>
+</ul>
+</blockquote>
+<div class="codehilite"><pre>            Go go1 = new Go();
+            Go go2 = new Go();
+            Object go3 = new Go();
+            System.out.println(go1 == go2);
+            System.out.println(go1.equals(go2));
+            System.out.println(go1.equals(go1.clone()));
+            System.out.println(go2 == go3);
+            System.out.println(go3.equals(go2));
+            System.out.println(go2.equals(go3));
+
+            // 控制台
+            false
+            false
+            false
+            false
+            false
+            false
+</pre></div>
+
+
+<h4 id="2_5">2) 创建对象的几种方式<a class="headerlink" href="#2_5" title="Permanent link"></a></h4>
+<blockquote>
+<ul>
+<li>new关键字</li>
+<li>clone()方法</li>
+<li>反序列化 ObjectInputStream()</li>
+<li>运用反射的方法，调用java.lang.Class或者java.lang.reflect.constructor类</li>
+</ul>
+</blockquote>
+<h4 id="3-innner-class">3) 嵌套类innner class<a class="headerlink" href="#3-innner-class" title="Permanent link"></a></h4>
+<blockquote>
+<ul>
+<li>静态内部类意味着：<blockquote>
+<ul>
+<li>创建一个static内部类的对象，不需要一个外部类对象</li>
+<li>不能从一个static内部类对象中访问外部类对象
+<h3 id='4.2'>4.2 集合类</h3>  </li>
+</ul>
+</blockquote>
+</li>
+</ul>
+</blockquote>
+<h4 id="1_7">1) 分类<a class="headerlink" href="#1_7" title="Permanent link"></a></h4>
+<blockquote>
+<ul>
+<li>Collection 类似于数组<blockquote>
+<ul>
+<li>List 以特定的次序储存元素，取出时未必按照原来的顺序<blockquote>
+<ul>
+<li>ArrayList 擅长随机访问元素，如果需要在中间插入、移动、删除元素则会花费较多的时间</li>
+<li>LinkedList 不擅长随机访问元素，如果需要在中间插入、移动、删除元素则会花费较少的时间</li>
+<li>Vector 不进行边界检查，可以确切知道它所持有的对象隶属什么类别，Vector总比ArrayList慢</li>
+</ul>
+</blockquote>
+</li>
+<li>Set 每个值只保存一个对象，不能还有重复的元素，顺序是随机的<blockquote>
+<ul>
+<li>HashSet 使用散列函数</li>
+<li>TreeSet 使用红黑树</li>
+<li>LinkedHashSet 使用链表结合散列函数</li>
+</ul>
+</blockquote>
+</li>
+<li>Queue 先进先出<blockquote>
+<ul>
+<li>PriorityQueue</li>
+</ul>
+</blockquote>
+</li>
+</ul>
+</blockquote>
+</li>
+<li>Map 类似于键名对 不允许有重复值<blockquote>
+<ul>
+<li>HashMap 适用于快速查找 允许一个null键和多个null值</li>
+<li>HashTable </li>
+<li>HashTree 用来维护排序状态，比较玄学</li>
+<li>TreeMap 适用于已经排好序的的序列</li>
+</ul>
+</blockquote>
+</li>
+</ul>
+</blockquote>
+<h4 id="2_6">2) 特点<a class="headerlink" href="#2_6" title="Permanent link"></a></h4>
+<blockquote>
+<ul>
+<li>List、Set、Map将所有对象都是为Object</li>
+<li>Collection、List、Set、Map都是接口，不能实例化。只有他们的子类才能创建始类</li>
+<li>Collections是一个帮助类，它提供一系列静态的方法实现对各种集合的搜索、排序、线程完全化操作，如</li>
+</ul>
+</blockquote>
+<div class="codehilite"><pre>            List&lt;Integer&gt; list = new ArrayList&lt;Integer&gt;();
+            list.add(1);
+            list.add(9);
+            list.add(6);
+            list.add(3);
+            for(int i: list) {
+                System.out.print(i);
+            }
+            Collections.sort(list);
+            for(int i: list) {
+                System.out.print(i);
+            }
+
+            //控制台
+            19631369
+</pre></div>
+
+
+<blockquote>
+<h2 id="-">-<a class="headerlink" href="#-" title="Permanent link"></a></h2>
+<ul>
 <li></li>
 </ul>
 </blockquote></article></body></html>
