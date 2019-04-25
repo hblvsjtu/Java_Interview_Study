@@ -27,6 +27,14 @@
 ### [4.3 构造函数](#4.3)
 ### [4.4 多态](#4.4)
 ### [4.5 继承](#4.5)
+## [五、字符串](#5)
+### [5.1 基础问题](#5.1)
+### [5.2 string和StringBuffer和StringBuilder比较](#5.2)
+### [5.3 字符串](#5.3)
+## [六、操作系统、数据库和网络](#6)
+### [6.1 基础问题](#6.1)
+### [6.2 string和StringBuffer和StringBuilder比较](#6.2)
+### [6.3 字符串](#6.3)
 
         
 ------      
@@ -324,7 +332,7 @@
 >> - 对象是可达的，即在有向图中，存在通路可以与其相连
 >> - 对象是无用的，即程序以后不会再使用这些对象
 > - 本质上是占用着内存却不会再被使用的对象
->>>>>> ![图3-1 Java内存分配.png](https://github.com/hblvsjtu/Java_Interview_Study/blob/master/picture/%E5%9B%BE1-2%20IO%E6%B5%81%E5%88%86%E7%B1%BB.png?raw=true)
+>>>>>> ![图3-1 Java内存分配.png](https://github.com/hblvsjtu/Java_Interview_Study/blob/master/picture/%E5%9B%BE3-1%20Java%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D.png?raw=true)
 <h3 id='3.2'>3.2 clone</h3>  
         
 #### 1) 特点
@@ -383,13 +391,13 @@
 > - Collection 类似于数组
 >> - List 以特定的次序储存元素，取出时未必按照原来的顺序
 >>> - ArrayList 擅长随机访问元素，如果需要在中间插入、移动、删除元素则会花费较多的时间
->>> - LinkedList 不擅长随机访问元素，如果需要在中间插入、移动、删除元素则会花费较少的时间
+>>> - LinkedList 不擅长随机访问元素，如果需要在中间插入、移动、删除元素则会花费较少的时间。实现了Queue接口，可以当成Queue来用
 >>> - Vector 不进行边界检查，可以确切知道它所持有的对象隶属什么类别，Vector总比ArrayList慢
 >> - Set 每个值只保存一个对象，不能还有重复的元素，顺序是随机的
 >>> - HashSet 使用散列函数
 >>> - TreeSet 使用红黑树
 >>> - LinkedHashSet 使用链表结合散列函数
->> - Queue 先进先出
+>> - Queue 先进先出 使用offer()加入元素;使用remove()和poll()都可以获取头并移除头元素，但是不同的是如果队列为空，那么remove()会抛出异常，而poll()会返回null;使用peek()和element()可以检索头元素但不移除，不同的是如果队列为空，那么element()会抛出异常，而peek()会返回null;
 >>> - PriorityQueue
 > - Map 类似于键名对 不允许有重复值
 >> - HashMap 适用于快速查找 允许一个null键和多个null值，线程同步时需要额外使用synchronize
@@ -400,6 +408,7 @@
 > - List、Set、Map将所有对象都是为Object
 > - Collection、List、Set、Map都是接口，不能实例化。只有他们的子类才能创建始类
 > - Collections是一个帮助类，它提供一系列静态的方法实现对各种集合的搜索、排序、线程完全化操作，如
+> - 迭代器iterator也需要接受泛型参数，否则会报编译错误
                 
                 List<Integer> list = new ArrayList<Integer>();
                 list.add(1);
@@ -502,3 +511,66 @@
 > - 默认修饰符是public 
 > - 方法默认是public abstract
 > - 实例域默认是public static final
+
+        
+------      
+        
+<h2 id='5'>五、字符串</h2>
+<h3 id='5.1'>5.1 基础问题</h3>  
+        
+#### 1) equal
+> - 如果是字符串，则比较内容是否一致
+> - 如果是对象，则比较所有的成员的值是否一致
+#### 2) string创建对象
+> - 字符串字面量储存在常量池(constant pool)中
+> - 字符串的 “+” 号连接操作也在常量池(constant pool)中
+> - 只有发生赋值的时候才会创建对象，如“string s = "a" + "b" + "c";”过程中只发生一次对象创建的过程
+        
+<h3 id='5.2'>5.2 常量池</h3>  
+        
+#### 1) Constant Pool
+> - 他是一个由数组组成的表
+> - 常量池在Java的方法区中，具体可以看[1.1 运行时数据区域](https://github.com/hblvsjtu/JVM_Study#1.1)
+> - string.intern()方法可以将有对象创建的字符串添加到常量池中，并返回常量池中的地址
+                
+                 String s1 = "Hello";
+                 String s2 = "Hello";
+                 String s3 = "Hel" + "lo";
+                 String s4 = "Hel" + new String("lo");
+                 String s5 = new String("Hello");
+                 String s6 = s5.intern();
+                 String s7 = "H";
+                 String s8 = "ello";
+                 String s9 = s7 + s8;
+                           
+                 System.out.println(s1 == s2);  // true
+                 System.out.println(s1 == s3);  // true 在编译期间JVM可以做优化在常量池中寻扎并返回“Hello”的地址
+                 System.out.println(s1 == s4);  // false new String("lo")是一个对象 是一个不可预知的结果，不能在编译期间做优化
+                 System.out.println(s1 == s9);  // false 变量也是一个不可预知的结果，不能在编译期间做优化
+                 System.out.println(s4 == s5);  // false
+                 System.out.println(s1 == s6);  // true
+
+        
+<h3 id='5.2'>5.2 string和StringBuffer和StringBuilder比较</h3>  
+        
+#### 4) string和StringBuffer和StringBuilder
+> - 运行速度快慢为：StringBuilder > StringBuffer > String
+> - 在线程安全上，StringBuilder是线程不安全的，而StringBuffer是线程安全的
+> - string的合并操作可能经历多次对象的创建,但简单的认为+号的效率小于StringBuffer和StringBuilder是错误的，因为当涉及到在编译器期能确定的字符串用+号进行连接的时候，只创建一个对象而且在编译期就能被JVM优化
+> - StringBuffer的操作只涉及一次的对象创建和多次的内存开辟
+> - [适用情况](https://www.cnblogs.com/su-feng/p/6659064.html)
+>> - String：适用于少量的字符串操作的情况，在编译期能确定字符串值的情况下，使用＋号的效率最高
+>> - StringBuilder：适用于单线程下在字符缓冲区进行大量操作的情况
+>> - StringBuffer：适用多线程下在字符缓冲区进行大量操作的情况
+> - 其他注意事项
+>> - 避免使用“+=”来构造字符串，因为每次都会创建新的对象。而原来的对象就会变成垃圾(如果没有其他引用的时候)。这样如果进行循环就会产生n个对象，从而造成内存泄露
+>> - 不要使用new创建String，因为string str = new string("string");这一句中创建引用1个，常量池中对象一个，堆heap中1个，合计两个对象
+>> - 声明StringBuffer的时候指定capacity，不要使用默认值(18)，
+>> - new StringBuffer("string"),它本身并不创建对象，而是改变对象本身
+            
+<h3 id='5.3'>5.3 正则表达式</h3>  
+        
+#### 1) 删除/挑选所需要的字符
+> - replaceAll(^targetReg, ""); //使用空格排除非目标字符
+> - split(^targetReg) 打散成数组后再合并
+            

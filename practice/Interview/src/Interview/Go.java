@@ -3,6 +3,7 @@
  */
 package Interview;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -59,6 +60,13 @@ public class Go implements Cloneable{
 		}
 		Father father = new Son();
 		System.out.println(((Son)father).getField("egg"));
+		BigInteger b1 = new BigInteger("1");
+		BigInteger b2 = new BigInteger("2");
+		BigInteger b3 = new BigInteger("0");
+		b3 = b3.add(b1);
+		b3 = b3.add(b2);
+		System.out.println(b3.toString());
+		
 	}
 	
 	private static String fin() throws Exception {
