@@ -583,7 +583,7 @@
 #### 1) 要点
 > - [32位程序的寻址能力是2^32，也就是4G。对于32位程序只能申请到4G的内存。而且这4G内存中，在windows下有2G，linux下有1G是保留给内核态使用，用户态无法访问。故只能分配2G、3G的内存使用。](https://www.cnblogs.com/reskai/p/7528627.html) 
 > - 进程 最短作业时间（在同一时刻比较多个进程的剩余时间，优先运行最小剩余时间的进程）
->>>>>> ![图6-1 最短作业时间.png](https://github.com/hblvsjtu/Java_Interview_Study/blob/master/picture/%E5%9B%BE3-1%20Java%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D.png?raw=true) 
+>>>>>> ![图6-1 最短作业时间.png](https://github.com/hblvsjtu/Java_Interview_Study/blob/master/picture/%E5%9B%BE6-1%20%E6%9C%80%E7%9F%AD%E4%BD%9C%E4%B8%9A%E6%97%B6%E9%97%B4.png?raw=true) 
 #### 2) 进程
 > - 三种状态
 >> - 就绪
@@ -637,14 +637,35 @@
 > - 储存过程和函数的区别：储存过程指的是用户自定义的一系列SQL语句的集合，设计特定表或其他对象的任务。函数指的是数据库已定义的方法，他接收参数并返回某种类型的值，而且不涉及特定用户表。
 #### 2) 优化数据库查询速度
 > - 
->>>>>> ![图6-2 优化数据库查询速度.png](https://github.com/hblvsjtu/Java_Interview_Study/blob/master/picture/%E5%9B%BE3-1%20Java%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D.png?raw=true) 
+>>>>>> ![图6-2 优化数据库查询速度.png](https://github.com/hblvsjtu/Java_Interview_Study/blob/master/picture/%E5%9B%BE6-2%20%E4%BC%98%E5%8C%96%E6%95%B0%E6%8D%AE%E5%BA%93%E6%9F%A5%E8%AF%A2%E9%80%9F%E5%BA%A6.png?raw=true) 
 #### 3) SQL语句示范
 > - 例子
->>>>>> ![图6-3 SQL语句示范问题.png](https://github.com/hblvsjtu/Java_Interview_Study/blob/master/picture/%E5%9B%BE3-1%20Java%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D.png?raw=true) 
+>>>>>> ![图6-3 SQL语句示范问题.png](https://github.com/hblvsjtu/Java_Interview_Study/blob/master/picture/%E5%9B%BE6-3%20SQL%E8%AF%AD%E5%8F%A5%E7%A4%BA%E8%8C%83%E9%97%AE%E9%A2%98.png?raw=true) 
 > - 答案
->>>>>> ![图6-4 SQL语句示范答案.png](https://github.com/hblvsjtu/Java_Interview_Study/blob/master/picture/%E5%9B%BE3-1%20Java%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D.png?raw=true) 
+>>>>>> ![图6-4 SQL语句示范答案.png](https://github.com/hblvsjtu/Java_Interview_Study/blob/master/picture/%E5%9B%BE6-4%20SQL%E8%AF%AD%E5%8F%A5%E7%A4%BA%E8%8C%83%E7%AD%94%E6%A1%88.png?raw=true) 
             
 <h3 id='6.3'>6.3 网络</h3>  
         
 请参考[Computer_Networking_Study](https://github.com/hblvsjtu/Computer_Networking_Study)
+#### 1) NAT 网络地址转换
+> - 将一个IP地址域映射到另一个IP地址域的技术，从而为终端主机提供透明路由。包括：
+>> - 静态网络地址转换
+>> - 动态网络地址转换
+>> - 网络地址及端口转换
+>> - 动态网络地址及端口转换
+>> - 端口映射
+> - 常用于私有地址与公有地址的转换，已解决IP地址匮乏的问题
+#### 2) IP地址
+> - A类地址是由1B网络地址和3B主机地址组成，最高为必须为0，即第一段数字范围为1-127
+> - B类地址是由2B网络地址和2B主机地址组成，最高为必须为10，即第一段数字范围为128-191
+> - C类地址是由3B网络地址和1B主机地址组成，最高为必须为110，即第一段数字范围为192-223
+> - D类地址是由4B网络地址和0B主机地址组成，最高为必须为1110，即第一段数字范围为224-239
+#### 3) 子网掩码
+> - 用于判断任意两台计算机的IP地址是否属于同一子网络的根据
+> - 最简单的理解是两台计算机各自的IP与子网掩码进行AND与与运算后如果得出的结果相同，则说明处于同一网络
+> - 255.255.255.(255-n), n代表对应网段有多少个ip
+#### 4) ICMP协议
+> - 它是TCP/IP协议族的一个子协议，用于IP主机、路由器之间传递控制消息
+#### 5) ping原理
+> - 向指定的IP地址发送一定长度的数据包，按照约定，若指定IP地址存在的话，会返回同样大小的数据包，如果在特定的时间内没有返回的话，就是“超时”，就认为指定的IP不存在。由于ping遵顼ICMP协议，有些防火墙软件会屏蔽ICMP协议。所以该结果只能作为参考。
 > - 
