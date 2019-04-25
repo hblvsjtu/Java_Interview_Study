@@ -663,7 +663,7 @@
 #### 3) 子网掩码
 > - 用于判断任意两台计算机的IP地址是否属于同一子网络的根据
 > - 最简单的理解是两台计算机各自的IP与子网掩码进行AND与与运算后如果得出的结果相同，则说明处于同一网络
-> - 255.255.255.(255-n), n代表对应网段有多少个ip
+>>>>>> ![图6-5 子网掩码.png](https://github.com/hblvsjtu/Java_Interview_Study/blob/master/picture/%E5%9B%BE6-4%20SQL%E8%AF%AD%E5%8F%A5%E7%A4%BA%E8%8C%83%E7%AD%94%E6%A1%88.png?raw=true) 
 #### 4) ICMP协议
 > - 它是TCP/IP协议族的一个子协议，用于IP主机、路由器之间传递控制消息
 #### 5) ping原理
