@@ -676,7 +676,7 @@
 ------      
         
 <h2 id='7'>七、算法求职班</h2>
-<h3 id='6.1'>6.1 基础知识</h3>  
+<h3 id='7.1'>7.1 最大子数组</h3>  
         
 #### 1) 要点
 > - 时间复杂度 O(1)基本运算、O(logn)二分查找、O(n1/2)枚举约数、O(n)线性查找、O(n2)朴素最近点对、O(n3)Floyd最短路、普通矩阵乘法、O(nlogn)归并排序、O(n!)枚举全排列
@@ -685,12 +685,57 @@
 >> - 递归式——主定理
 > - 空间复杂度
 #### 2) 最大子数组
-> - 暴力枚举：三重循环
+> - 公共代码
                 
+                /**
+                 * 
+                 */
+                package Algorithm;
+
+                /**
+                 * @author LvHongbin
+                 *
+                 */
+                public class MaxSubArray {
+
+
+                    private int[] array = {};
+                    public static void main(String[] arg) {
+                        int[] array = {1,3,5,7,9,8,6,-4,2,0,1,3,5,7,9,8,-6,4,2,1,3,5,7,9,8,6,-4,2,0,1,3,5,7,9,8,-6,4,2,1,3,5,7,9,8,6,-4,2,0,1,3,5,7,9,8,-6,4,2,1,3,5,7,9,8,6,-4,2,0,1,3,5,7,9,8,-6,4,2
+                                ,1,3,5,7,9,8,6,-4,2,0,1,3,5,7,9,8,-6,4,2,1,3,5,7,9,8,6,-4,2,0,1,3,5,7,9,8,-6,4,2,1,3,5,7,9,8,6,-4,2,0,1,3,5,7,9,8,-6,4,2,1,3,5,7,9,8,6,-4,2,0,1,3,5,7,9,8,-6,4,2
+                                ,1,3,5,7,9,8,6,-4,2,0,1,3,5,7,9,8,-6,4,2,1,3,5,7,9,8,6,-4,2,0,1,3,5,7,9,8,-6,4,2,1,3,5,7,9,8,6,-4,2,0,1,3,5,7,9,8,-6,4,2,1,3,5,7,9,8,6,-4,2,0,1,3,5,7,9,8,-6,4,2
+                                ,1,3,5,7,9,8,6,-4,2,0,1,3,5,7,9,8,-6,4,2,1,3,5,7,9,8,6,-4,2,0,1,3,5,7,9,8,-6,4,2,1,3,5,7,9,8,6,-4,2,0,1,3,5,7,9,8,-6,4,2,1,3,5,7,9,8,6,-4,2,0,1,3,5,7,9,8,-6,4,2
+                                ,1,3,5,7,9,8,6,-4,2,0,1,3,5,7,9,8,-6,4,2,1,3,5,7,9,8,6,-4,2,0,1,3,5,7,9,8,-6,4,2,1,3,5,7,9,8,6,-4,2,0,1,3,5,7,9,8,-6,4,2,1,3,5,7,9,8,6,-4,2,0,1,3,5,7,9,8,-6,4,2
+                                ,1,3,5,7,9,8,6,-4,2,0,1,3,5,7,9,8,-6,4,2,1,3,5,7,9,8,6,-4,2,0,1,3,5,7,9,8,-6,4,2,1,3,5,7,9,8,6,-4,2,0,1,3,5,7,9,8,-6,4,2,1,3,5,7,9,8,6,-4,2,0,1,3,5,7,9,8,-6,4,2
+                                ,1,3,5,7,9,8,6,-4,2,0,1,3,5,7,9,8,-6,4,2,1,3,5,7,9,8,6,-4,2,0,1,3,5,7,9,8,-6,4,2,1,3,5,7,9,8,6,-4,2,0,1,3,5,7,9,8,-6,4,2,1,3,5,7,9,8,6,-4,2,0,1,3,5,7,9,8,-6,4,2
+                                ,1,3,5,7,9,8,6,-4,2,0,1,3,5,7,9,8,-6,4,2,1,3,5,7,9,8,6,-4,2,0,1,3,5,7,9,8,-6,4,2,1,3,5,7,9,8,6,-4,2,0,1,3,5,7,9,8,-6,4,2,1,3,5,7,9,8,6,-4,2,0,1,3,5,7,9,8,-6,4,2
+                                ,1,3,5,7,9,8,6,-4,2,0,1,3,5,7,9,8,-6,4,2,1,3,5,7,9,8,6,-4,2,0,1,3,5,7,9,8,-6,4,2,1,3,5,7,9,8,6,-4,2,0,1,3,5,7,9,8,-6,4,2,1,3,5,7,9,8,6,-4,2,0,1,3,5,7,9,8,-6,4,2
+                                ,1,3,5,7,9,8,6,-4,2,0,1,3,5,7,9,8,-6,4,2,1,3,5,7,9,8,6,-4,2,0,1,3,5,7,9,8,-6,4,2,1,3,5,7,9,8,6,-4,2,0,1,3,5,7,9,8,-6,4,2,1,3,5,7,9,8,6,-4,2,0,1,3,5,7,9,8,-6,4,2
+                                };
+                        MaxSubArray m = new MaxSubArray(array);
+                        long startTime = System.currentTimeMillis();
+                        int[] result = m.select();
+                        long endTime = System.currentTimeMillis();
+                        for(int i : result) {
+                            System.out.printf("%d\t" ,i);
+                        }
+                        System.out.println("\n" + (endTime - startTime));
+                    }
+                    
+                    public MaxSubArray(int[] array) {
+                        this.array = array;
+                    }
+                    
+                    private int[] select() {
+                        return result;
+                    }
+                }
+> - 暴力枚举：左右夹击三重循环
+                    
                 private int[] select() {
                     int[] result = {0, 0, 0};
                     int num = this.array.length - 1; 
-                    int max = 0;
+                    int max = -10000000;
                     int sum = 0;
                     for(int left=0; left<=num; left++) {
                         for(int right=num; right>=left; right--) {
@@ -707,5 +752,235 @@
                     }
                     return result;
                 }
+
+                // 控制台
+                0   756 2800    
+                所耗时间： 42 ms
+> - 优化枚举：求和优化二重循环，优化的重点在于找冗余，很明显冗余求和那里，每一次都要重新求和，实际上可以利用第二重循环然后在此基础上加一个元素即可，没有必要重新求和
+                
+                private int[] select() {
+                    int[] result = {0, 0, 0};
+                    int num = this.array.length - 1; 
+                    int max = -10000000;
+                    for(int left=0; left<=num; left++) {
+                        int sum = 0;
+                        for(int right=left; right<=num; right++) {
+                            sum += this.array[right];
+                            if(sum>=max) {
+                                result[0] = left;
+                                result[1] = right;
+                                result[2] = max = sum;
+                            }
+                        }
+                    }
+                    return result;
+                }
+
+                0   759 2800    
+                所耗时间： 2 ms
+> - 终极优化：贪心法一重循环，只取和大于等于0的子集，小于0的抛弃
+                
+                private int[] select() {
+                    int[] result = {0, 0, 0};
+                    int num = this.array.length - 1; 
+                    int max = -10000000;
+                    int sum = 0;
+                    int left = 0;
+                    for(int i=0; i<=num; i++) {
+                        sum += this.array[i];
+                        if(sum>=max) {
+                            result[0] = left;
+                            result[1] = i;
+                            result[2] = max = sum;
+                        }
+                        if(sum<0) {
+                            left = i+1;
+                            sum = 0;
+                        }
+                    }
+                    return result;
+                }
+
+                // 
+                0   759 2800                     
+                所耗时间： 0 ms
+<h3 id='7.2'>7.2 博弈论概率数论</h3>  
+        
+#### 1) 要点
+> - 求先手或者后手必胜的策略
+> - 平衡态
+> - 终态
+> - 
+#### 2) 条件概率公式
+> - 设A,B是两个事件，且P(B)>0,则在事件B发生的条件下，事件A发生的条件概率（conditional probability)为
+                
+                P(A|B)=P(AB)/P(B)
 > - 
 > - 
+> - 
+#### 3) 贝叶斯公式
+> - 通常，事件A在事件B(发生)的条件下的概率，与事件B在事件A的条件下的概率是不一样的；然而，这两者是有确定的关系,贝叶斯法则就是这种关系的陈述。
+> - 作为一个规范的原理，贝叶斯法则对于所有概率的解释是有效的；
+                
+                P(Ai|B) = P(B|Ai)P(Ai)/ΣP(B|Ai)P(Ai)
+
+                // P(A)是A的先验概率或边缘概率。之所以称为"先验"是因为它不考虑任何B方面的因素。
+                //P(A|B)是已知B发生后A的条件概率，也由于得自B的取值而被称作A的后验概率。
+                // P(B|A)是已知A发生后B的条件概率，也由于得自A的取值而被称作B的后验概率。
+                // P(B)是B的先验概率或边缘概率，也作标准化常量（normalized constant）。
+#### 4) 公共类MainTool
+                
+                /**
+                 * 
+                 */
+                package Algorithm;
+
+                import java.io.BufferedReader;
+                import java.io.IOException;
+                import java.io.InputStreamReader;
+
+                /**
+                 * @author LvHongbin
+                 *
+                 */
+                public class MainTool {
+                    
+                    private int num  = 0;
+                    private int[] input;
+                    
+                    public MainTool(int num) {
+                        this.num = num;
+                    }
+                    
+
+                    public int[] input() {
+                        this.input = new int[num];
+                        System.out.println("Please input the arguements:");
+                        BufferedReader buffer = new BufferedReader(new InputStreamReader(System.in));
+                        try {
+                            String[] S = buffer.readLine().split(",");
+                            int i = 0;
+                            for(String s: S) {
+                                this.input[i] = Integer.parseInt(s);
+                                i++;
+                            }
+                        }catch(IOException e) {
+                            e.printStackTrace();
+                        }finally {
+                            try {
+                                buffer.close();
+                            } catch (IOException e) {
+                                // TODO Auto-generated catch block
+                                e.printStackTrace();
+                            }
+                        }
+                        return this.input;
+                    }
+                    
+                    public int result(int[] i) {
+                        return 0;
+                    }
+                    
+                    public void execute() {
+                        Long startTime = System.currentTimeMillis();
+                        System.out.println("\nThe result is " + result(input()));
+                        Long stopTime = System.currentTimeMillis();
+                        System.out.println("The during time is " + (stopTime - startTime));
+                    }
+                }
+#### 5) 最大公约数
+> - 辗转相除法
+                
+                /**
+                 * 
+                 */
+                package Algorithm;
+
+                /**
+                 * @author LvHongbin
+                 *
+                 */
+                public class GreatestCommonDivisor extends MainTool{
+                    
+                    public static void main(String[] args) {
+                        MainTool m = new GreatestCommonDivisor(2);
+                        m.execute();
+                    } 
+
+                    public GreatestCommonDivisor(int num) {
+                        super(num);
+                        // TODO Auto-generated constructor stub
+                    }
+                    
+                    
+                    @Override
+                    public int result(int[] i) {
+                        // TODO Auto-generated method stub
+                        int a = i[0]%i[1];
+                        return a == 0 ? i[1] : result(new int[]{i[1],a});   
+                    }
+                }
+#### 6) 查找【2, N】内所有的质数
+> - (1) 从小到大查找N在\[2，Sqrt(N)]上的因数
+> - (2) 删除第一个元素后的所有倍数
+> - (3) 删除第一个元素，跳回(2)
+> - 时间复杂度：O(log(N))
+                
+                /**
+                 * 
+                 */
+                package Algorithm;
+
+                import java.util.ArrayList;
+
+                /**
+                 * @author LvHongbin
+                 *
+                 */
+                public class PrimeNumber extends MainTool{
+                    
+                    private int num = 0;
+                    public static void main(String[] args) {
+                        MainTool m = new PrimeNumber(1);
+                        m.execute();
+                    } 
+
+                    public PrimeNumber(int num) {
+                        super(num);
+                        // TODO Auto-generated constructor stub
+                    }
+                    
+                    public int result(int[] i) {
+                        ArrayList<Integer> list =new ArrayList<Integer>();
+                        for(int a = 2; a<=i[0]; a++) {
+                            list.add(a);
+                        }
+                        find(list);
+                        return this.num;
+                    }
+                    
+                    public ArrayList<Integer> find(ArrayList<Integer> list) {
+                        int a = list.size();
+                        if(a == 0) return null;
+                        for(int i = 1; i<list.size(); i++) {
+                            if(list.get(i) % list.get(0) == 0) {
+                                list.remove(i);
+                            }
+                        }
+                        System.out.print(list.remove(0) + "\t");
+                        this.num++;
+                        return find(list);
+                    }
+                }
+#### 7) 质因数分解
+> - (1) 从小到大查找N在\[2，Sqrt(N)]上的因数
+> - (2) 查找到第一个因数为N的最小质因数P
+> - (3) N=N/P，跳回(1)
+> - 时间复杂度：O(Sqrt(n))
+#### 8) mod运算
+                
+                ( a + b ) % m = ( a % m + b % m ) % m
+                ( a * b ) % m = ( a % m ) * ( b % m ) % m
+                ( a + b ) % m = ( b + a ) % m //交换律
+                ( a + b + c) % m = ( a + (b + c)) % m //结合律
+                ( a + b ) * c % m = ( ac + bc ) % m //分配律
